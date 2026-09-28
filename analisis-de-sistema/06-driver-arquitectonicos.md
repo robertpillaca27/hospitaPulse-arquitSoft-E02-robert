@@ -1,0 +1,7 @@
+| ID | Driver arquitectónico | Origen | ¿Por qué influye en la arquitectura? |
+| :--- | :--- | :--- | :--- |
+| **DA01** | El sistema debe garantizar la confidencialidad y el anonimato absoluto en las respuestas. | AC01 – Seguridad y Privacidad | Obliga a implementar mecanismos de desacoplamiento de identidades en el Backend y filtros de supresión ($N < 5$) antes de la capa de analítica. |
+| **DA02** | El sistema debe permitir evaluaciones rápidas y con opción de borrador temporal. | AC02 – Usabilidad | Condiciona la arquitectura del Frontend a contar con persistencia local (LocalStorage) y diseño enfocado en experiencia móvil/tablet. |
+| **DA03** | El sistema debe mantener tiempos de respuesta óptimos durante la carga simultánea en cambio de turno. | AC04 – Rendimiento | Influye en el desacoplamiento de la base de datos transaccional (OLTP) frente a la base de datos analítica (Datamart OLAP). |
+| **DA04** | El sistema debe integrarse con Keycloak para autenticación centralizada mediante API. | RC04 – Servicio de Autenticación SSO | Define el mecanismo de autorización mediante tokens JWT en la capa de API Gateway o Backend. |
+| **DA05** | El sistema debe utilizar una API REST para la comunicación entre el frontend y el backend. | RC03 – API REST | Determina el patrón de arquitectura desacoplado (Single Page Application + API Backend en FastAPI). |
