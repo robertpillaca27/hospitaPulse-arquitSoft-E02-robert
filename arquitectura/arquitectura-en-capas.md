@@ -1,4 +1,3 @@
-```mermaid
 flowchart TD
 %% =========================
 %% CAPA DE PRESENTACIÓN
@@ -92,4 +91,3 @@ style Datamart fill:#222,stroke:#fff,color:#fff
 style Keycloak fill:#222,stroke:#fff,color:#fff
 style Legacy fill:#222,stroke:#fff,color:#fff
 style Direccion fill:#222,stroke:#fff,color:#fff
-```

@@ -5,4 +5,4 @@
 | **HU03** | Como jefe de servicio, quiero consultar tableros de control con indicadores de burnout de mi departamento, para identificar áreas en riesgo emocional. |
 | **HU04** | Como especialista de RRHH, quiero gestionar y estructurar el organigrama hospitalario en múltiples niveles, para asignar encuestas según el área y régimen laboral. |
 | **HU05** | Como especialista de RRHH, quiero exportar reportes analíticos de clima laboral, para cumplir con los requerimientos informativos de la DIRESA y MINSA. |
-| **HU06** | Como administrador de TI, quiero integrar la autenticación del sistema con Keycloak / Active Directory, para garantizar un acceso seguro y centralizado mediante Single Sign-On (SSO). |
+| **HU06** | Como administrador de TI, quiero integrar la autenticación del sistema con Keycloak, para garantizar un acceso seguro y centralizado mediante Single Sign-On (SSO). |
