@@ -20,7 +20,7 @@ Abrir el contenedor de la API del nivel 2 y mostrar sus componentes: los módulo
 
 ## 2. Diagrama
 
-* **Archivo editable:** `img/fuentes/nivel3-componentes.drawio`
+![](/img/nivel3-componentes.png)
 
 ---
 

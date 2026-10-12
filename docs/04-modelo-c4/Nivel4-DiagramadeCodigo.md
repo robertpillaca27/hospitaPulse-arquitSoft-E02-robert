@@ -20,7 +20,7 @@ Mostrar cómo está organizado el código de un componente del nivel 3: sus clas
 
 ## 2. Diagrama de clases
 
-* **Archivo editable:** `img/fuentes/nivel4-clases.svg`
+![](/img/nivel4-clases.svg)
 
 ### 2.1 Capas de Clean Architecture
 
