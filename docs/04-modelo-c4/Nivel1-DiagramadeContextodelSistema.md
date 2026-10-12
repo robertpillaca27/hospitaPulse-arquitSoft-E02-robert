@@ -18,8 +18,7 @@ Mostrar el sistema del Hospital Regional de Ayacucho como una sola caja: quiéne
 
 ## 2. Diagrama
 
-* **Archivo editable:** `img/nivel1-contexto.png`
-
+![](/img/nivel1-contexto.png)
 ---
 
 ## 3. Personas (usuarios)
