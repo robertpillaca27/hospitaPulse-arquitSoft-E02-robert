@@ -20,7 +20,7 @@ Mostrar cómo está organizado el código de un componente del nivel 3: sus clas
 
 ## 2. Diagrama de clases
 
-![](/img/nivel4-clases.svg)
+![](/img/nivel4-clases.png)
 
 ### 2.1 Capas de Clean Architecture
 
@@ -74,7 +74,7 @@ Mostrar cómo está organizado el código de un componente del nivel 3: sus clas
 
 ## 3. Diagrama de secuencia: registrar respuesta anónima
 
-* **Archivo editable:** `img/fuentes/nivel4-secuencia.svg`
+* **Archivo editable:** `/img/nivel4-secuencia.png`
 
 | Paso | Origen → Destino | Acción |
 | :--- | :--- | :--- |
