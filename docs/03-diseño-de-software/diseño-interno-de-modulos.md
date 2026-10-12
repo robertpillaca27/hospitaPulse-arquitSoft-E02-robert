@@ -87,7 +87,7 @@ src/
 | **Símbolos `-` / `+`** | **Visibilidad:** `-` Atributo o método privado / `+` Atributo o método público. | `- estado`, `+ totalRespuestas()` |
 
 ## 5. Flujo de ejecución: registrar respuesta anónima
-![Diagrama de secuencia de crear encuestas](/img/secuencia-crear-encuestaS.png)
+![Diagrama de secuencia de crear encuestas](/img/secuencia-crear-encuestas.png)
 | Paso | Origen → Destino | Acción | Capa |
 | :---: | :--- | :--- | :--- |
 | **1** | Personal del Hospital → `EncuestasController` | `POST /api/v1/encuestas` con `encuestaId`, `servicioId` y `respuestas` | Presentación |

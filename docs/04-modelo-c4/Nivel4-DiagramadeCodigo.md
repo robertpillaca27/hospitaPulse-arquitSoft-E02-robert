@@ -74,7 +74,7 @@ Mostrar cómo está organizado el código de un componente del nivel 3: sus clas
 
 ## 3. Diagrama de secuencia: registrar respuesta anónima
 
-* **Archivo editable:** `/img/nivel4-secuencia.png`
+![](/img/nivel4-secuencia.png)
 
 | Paso | Origen → Destino | Acción |
 | :--- | :--- | :--- |
