@@ -71,3 +71,5 @@ Mostrar el sistema del Hospital Regional de Ayacucho como una sola caja: quiéne
 | :--- | :--- |
 | **Canal oficial de notificaciones** | Confirmar con el área de TI del hospital si las alertas se enviarán exclusivamente por correo institucional o si se integrarán notificaciones vía WhatsApp/Telegram. |
 | **Periodicidad de sincronización con el Directorio Activo** | Definir la frecuencia con la que se actualizan los roles y áreas de los trabajadores del hospital para la segmentación de las encuestas. |
+
+--
