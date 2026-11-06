@@ -14,8 +14,18 @@ Este documento describe **cómo se organiza el código dentro de un módulo** de
 - que las reglas de negocio queden aisladas de la tecnología;
 - que cualquier integrante del equipo sepa dónde va cada archivo y de qué puede depender.
 
+## 2. Módulo del Sistemas
+| Módulo | Responsabilidad Principal | Dependencias / Interacciones Clave |
+| :--- | :--- | :--- |
+| **1. Usuarios** | Autenticación corporativa, cuentas y asignación de roles. | Conectado con **Keycloak** (OAuth2/OIDC). |
+| **2. Áreas** | Gestión de servicios, departamentos y unidades del hospital. | Base relacional asociada a las encuestas por servicio. |
+| **3. Encuestas** | Creación de cuestionarios, campañas y recepción de respuestas. | Invoca al módulo de *Supresión* antes de persistir. |
+| **4. Supresión** | Aplicación de la regla estricta de confidencialidad para **bloquear grupos menores a 5 personas ($N < 5$)**. | Módulo transversal crítico de privacidad. |
+| **5. Reportes** | Generación de indicadores institucionales y tableros de clima laboral. | Optimizado con **Redis** para consultas en tiempo real. |
+| **6. Notificaciones** | Envío de alertas, avisos de campañas y recordatorios al personal. | Integrado con servicios externos de mensajería. |
 
-## 2. Estructura de carpetas
+
+## 3. Estructura de carpetas
 
 ```text
 src/
@@ -59,7 +69,7 @@ src/
 | `encuestas.module.py` | Composición | Crear las instancias concretas e inyectarlas | Todas las capas |
 | `index.py` | Composición | Exponer solo lo que otros módulos pueden usar | `encuestas.module.py` |
 
-### 3. Capas del módulo y regla de dependencia
+### 4. Capas del módulo y regla de dependencia
 
 > **Regla de dependencia:** El código solo puede importar hacia el dominio. El dominio no conoce FastAPI, PostgreSQL ni Keycloak.
 
@@ -73,9 +83,9 @@ src/
 | **Presentación** | Controladores, rutas | Traducir HTTP a llamadas del caso de uso y viceversa | Aplicación | Infraestructura, base de datos |
 | **Composición** | `encuestas.module.py` | Elegir implementaciones concretas y conectarlas | Todas | — |
 
-## 4. Diagrama de clases
+## 5. Diagrama de clases
 ![Diagrama de clases del módulo Encuestas](/img/clases-modulo-encuestas.png)
-### 4.1 Notación UML utilizada
+### 5.1 Notación UML utilizada
 
 | Símbolo | Significado | Ejemplo en el diagrama |
 | :--- | :--- | :--- |
@@ -86,7 +96,7 @@ src/
 | **Nombre en cursiva + «interface»** | **Interfaz:** Contrato abstracto sin implementación concreta. | *`«interface» EncuestaRepository`*, *`«interface» SupresionPort`* |
 | **Símbolos `-` / `+`** | **Visibilidad:** `-` Atributo o método privado / `+` Atributo o método público. | `- estado`, `+ totalRespuestas()` |
 
-## 5. Flujo de ejecución: registrar respuesta anónima
+## 6. Flujo de ejecución: registrar respuesta anónima
 ![Diagrama de secuencia de crear encuestas](/img/secuencia-crear-encuestas.png)
 | Paso | Origen → Destino | Acción | Capa |
 | :---: | :--- | :--- | :--- |
