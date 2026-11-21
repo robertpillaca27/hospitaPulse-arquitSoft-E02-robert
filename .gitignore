@@ -1,0 +1,27 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/coverage/
+frontend/playwright-report/
+frontend/test-results/
+frontend/*.tsbuildinfo
+frontend/.env.local
+frontend/.env.*.local
+
+.env
+.env.*
+!.env.example
+backups/
+
+# ECS task definitions may contain environment values or secret references.
+/td-api.json
+/td-frontend.json
+/frontend/td-frontend.json
+/frontend/.tsupgrader/

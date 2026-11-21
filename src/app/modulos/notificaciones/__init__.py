@@ -1,0 +1,1 @@
+"""Institutional notifications module."""

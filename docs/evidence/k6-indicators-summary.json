@@ -1,0 +1,33 @@
+{
+  "captured_at_utc": "2026-11-21T15:06:25.623885+00:00",
+  "source": "k6 summary export; setup credentials omitted",
+  "target_scope": "loopback only",
+  "scenario": {
+    "max_vus": 50,
+    "duration_seconds": 120
+  },
+  "requests": {
+    "total": 57173,
+    "failed_rate": 0,
+    "failed_count": 0
+  },
+  "checks": {
+    "passed": 114344,
+    "failed": 0
+  },
+  "latency_ms": {
+    "avg": 104.81393733055751,
+    "p95": 182.64639999999974,
+    "max": 398.248
+  },
+  "thresholds": {
+    "http_req_failed_rate_lt_0_01": {
+      "passed": true,
+      "observed_rate": 0
+    },
+    "http_req_duration_p95_lt_500": {
+      "passed": true,
+      "observed_p95_ms": 182.64639999999974
+    }
+  }
+}

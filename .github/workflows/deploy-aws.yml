@@ -1,0 +1,70 @@
+name: Deploy AWS
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-2
+  ECS_CLUSTER: hospitahub-cluster
+  ECR_REGISTRY: 229730639355.dkr.ecr.us-east-2.amazonaws.com
+
+jobs:
+  deploy:
+    if: vars.ENABLE_AWS_DEPLOY == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - uses: aws-actions/amazon-ecr-login@v2
+      - run: |
+          docker build -t "$ECR_REGISTRY/hospitahub-api:${GITHUB_SHA}" .
+          docker push "$ECR_REGISTRY/hospitahub-api:${GITHUB_SHA}"
+          docker build \
+            --build-arg NEXT_PUBLIC_API_BASE_URL=http://hospitapulse-public-2075318033.us-east-2.elb.amazonaws.com \
+            -t "$ECR_REGISTRY/hospitahub-frontend:${GITHUB_SHA}" \
+            -f frontend/Dockerfile frontend
+          docker push "$ECR_REGISTRY/hospitahub-frontend:${GITHUB_SHA}"
+      - name: Update API task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition hospitahub-api-td \
+            --region "$AWS_REGION" \
+            --query taskDefinition > api-task.json
+          jq "del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy) |
+              .containerDefinitions[0].image = \"$ECR_REGISTRY/hospitahub-api:${GITHUB_SHA}\"" \
+            api-task.json > api-task-new.json
+          API_REVISION=$(aws ecs register-task-definition \
+            --cli-input-json file://api-task-new.json \
+            --region "$AWS_REGION" \
+            --query taskDefinition.revision --output text)
+          aws ecs update-service --cluster "$ECS_CLUSTER" \
+            --service hospitahub-api-td-service-per4kzto \
+            --task-definition "hospitahub-api-td:${API_REVISION}" \
+            --region "$AWS_REGION"
+      - name: Update frontend task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition hospitahub-frontend-td \
+            --region "$AWS_REGION" \
+            --query taskDefinition > frontend-task.json
+          jq "del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy) |
+              .containerDefinitions[0].image = \"$ECR_REGISTRY/hospitahub-frontend:${GITHUB_SHA}\"" \
+            frontend-task.json > frontend-task-new.json
+          FRONTEND_REVISION=$(aws ecs register-task-definition \
+            --cli-input-json file://frontend-task-new.json \
+            --region "$AWS_REGION" \
+            --query taskDefinition.revision --output text)
+          aws ecs update-service --cluster "$ECS_CLUSTER" \
+            --service hospitahub-frontend-service \
+            --task-definition "hospitahub-frontend-td:${FRONTEND_REVISION}" \
+            --region "$AWS_REGION"
+      - run: aws ecs wait services-stable --cluster "$ECS_CLUSTER" --services hospitahub-api-td-service-per4kzto hospitahub-frontend-service --region "$AWS_REGION"

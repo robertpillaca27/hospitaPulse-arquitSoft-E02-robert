@@ -1,0 +1,10 @@
+<testsuites id="" name="" tests="3" failures="0" skipped="0" errors="0" time="12.306083999999998">
+<testsuite name="core-flow.spec.ts" timestamp="2026-11-21T15:12:33.569Z" hostname="chromium-mobile" tests="3" failures="0" skipped="0" time="11.063" errors="0">
+<testcase name="loads the mobile login and public health endpoint" classname="core-flow.spec.ts" time="2.576">
+</testcase>
+<testcase name="administrator signs in and views protected indicators" classname="core-flow.spec.ts" time="2.27">
+</testcase>
+<testcase name="staff completes the monthly survey after changing the temporary password" classname="core-flow.spec.ts" time="6.217">
+</testcase>
+</testsuite>
+</testsuites>
