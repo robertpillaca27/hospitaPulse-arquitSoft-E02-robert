@@ -1,0 +1,1 @@
+"""Aggregated climate reporting module."""

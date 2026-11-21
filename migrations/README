@@ -1,0 +1,5 @@
+Single-head Alembic migration chain for HospitaPulse.
+
+Use DATABASE_URL from .env and run `alembic upgrade head` before starting the
+backend. Existing pre-Alembic databases must be verified against the initial
+migration before being stamped; do not use `stamp` on an unknown schema.

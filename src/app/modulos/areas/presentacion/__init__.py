@@ -1,0 +1,1 @@
+"""Areas HTTP presentation."""

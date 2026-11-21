@@ -1,0 +1,137 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql+psycopg://hospitapulse:ci-local-only-password@localhost:5432/hospitapulse
+      JWT_SECRET: ci-test-secret-with-at-least-thirty-two-characters
+      ADMIN_USERNAME: ci-admin
+      ADMIN_PASSWORD: ci-admin-password-2026
+      ADMIN_FULL_NAME: Administrador CI
+      ADMIN_EMAIL: ci-admin@example.invalid
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: hospitapulse
+          POSTGRES_USER: hospitapulse
+          POSTGRES_PASSWORD: ci-local-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U hospitapulse -d hospitapulse"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: alembic upgrade head
+      - run: pytest -q
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:8000
+      - run: npm test
+
+  compose-e2e:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    env:
+      POSTGRES_DB: hospitapulse
+      POSTGRES_USER: hospitapulse
+      POSTGRES_PASSWORD: ci-local-only-password
+      DATABASE_URL: postgresql+psycopg://hospitapulse:ci-local-only-password@localhost:5432/hospitapulse
+      REDIS_URL: redis://localhost:6379/0
+      JWT_SECRET: ci-test-secret-with-at-least-thirty-two-characters
+      ADMIN_USERNAME: ci-admin
+      ADMIN_PASSWORD: ci-admin-password-2026
+      ADMIN_FULL_NAME: Administrador CI
+      ADMIN_EMAIL: ci-admin@example.invalid
+      NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:8000
+    steps:
+      - uses: actions/checkout@v4
+      - run: cp .env.example .env
+      - run: |
+          cat >> .env <<'EOF'
+          POSTGRES_DB=${{ env.POSTGRES_DB }}
+          POSTGRES_USER=${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ env.POSTGRES_PASSWORD }}
+          DATABASE_URL=${{ env.DATABASE_URL }}
+          REDIS_URL=${{ env.REDIS_URL }}
+          JWT_SECRET=${{ env.JWT_SECRET }}
+          ADMIN_USERNAME=${{ env.ADMIN_USERNAME }}
+          ADMIN_PASSWORD=${{ env.ADMIN_PASSWORD }}
+          ADMIN_FULL_NAME=${{ env.ADMIN_FULL_NAME }}
+          ADMIN_EMAIL=${{ env.ADMIN_EMAIL }}
+          EOF
+      - run: docker compose up -d --build db redis api frontend
+      - run: |
+          for attempt in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8000/api/v1/health >/dev/null &&
+              curl -fsS http://127.0.0.1:3000 >/dev/null && exit 0
+            sleep 2
+          done
+          docker compose logs
+          exit 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+        working-directory: frontend
+      - run: npx playwright install --with-deps chromium
+        working-directory: frontend
+      - run: npm run test:e2e
+        working-directory: frontend
+        env:
+          E2E_BASE_URL: http://127.0.0.1:3000
+          E2E_API_URL: http://127.0.0.1:8000
+          E2E_ADMIN_USERNAME: ${{ env.ADMIN_USERNAME }}
+          E2E_ADMIN_PASSWORD: ${{ env.ADMIN_PASSWORD }}
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-junit
+          path: frontend/test-results/junit.xml
+          if-no-files-found: ignore
+          retention-days: 7
+      - if: always()
+        run: docker compose down -v
+
+  containers:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t hospitapulse-api:${{ github.sha }} .
+      - run: docker build -f frontend/Dockerfile --build-arg NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000 -t hospitapulse-frontend:${{ github.sha }} frontend

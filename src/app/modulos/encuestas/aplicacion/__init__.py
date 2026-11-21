@@ -1,0 +1,1 @@
+"""Survey application use cases."""

@@ -1,0 +1,1 @@
+"""HospitaPulse API application."""
